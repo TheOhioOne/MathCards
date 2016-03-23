@@ -15,6 +15,11 @@ import android.widget.ListView;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG_CARD_BACK = "tagCardBack";
+    private static final String KEY_MODE = "mode";
+    private static final String KEY_TOP = "top";
+    private static final String KEY_BOTTOM = "bottom";
+    private static final String KEY_RESULT = "result";
+    private static final String KEY_IS_BACK = "is back";
     private String[] mPlanetTitles;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -35,6 +40,16 @@ public class MainActivity extends AppCompatActivity
         else {
             result = presenter.createNewNumbers(topNumber,bottomNumber,mode);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_MODE, mode);
+        outState.putInt(KEY_BOTTOM, bottomNumber);
+        outState.putInt(KEY_TOP, topNumber);
+        outState.putInt(KEY_RESULT, result);
+        outState.putBoolean(KEY_IS_BACK, mShowingBack);
     }
 
     @Override
@@ -60,7 +75,13 @@ public class MainActivity extends AppCompatActivity
                     .add(R.id.container, CardFrontFragment.createInstance(topNumber, bottomNumber, mode.getOperator()), TAG_CARD_BACK)
                     .commit();
             getFragmentManager().executePendingTransactions();
-        }
+        } else {
+           mode = (Mode) savedInstanceState.getSerializable(KEY_MODE);
+           topNumber = savedInstanceState.getInt(KEY_TOP);
+           bottomNumber = savedInstanceState.getInt(KEY_BOTTOM);
+           result = savedInstanceState.getInt(KEY_RESULT);
+           mShowingBack = savedInstanceState.getBoolean(KEY_IS_BACK);
+       }
 
     }
 
